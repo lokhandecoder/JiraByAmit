@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: personal_jira_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: personal_jira_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./Migrations/001_InitialCreate.sql:/docker-entrypoint-initdb.d/001_InitialCreate.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d personal_jira_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal_jira_api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=personal_jira_db;Username=postgres;Password=postgres
+    ports:
+      - "5000:5000"
+
+volumes:
+  pgdata:

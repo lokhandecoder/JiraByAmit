@@ -1,0 +1,6 @@
+{
+  "name": "Personal Jira",
+  "description": "Personal Jira task tracking with sprint planning, progress reporting, user management, and .NET Core Web API with PostgreSQL backend.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
